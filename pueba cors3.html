@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Prueba CORS</title>
+
+<style>
+body{
+    font-family:Arial;
+    margin:40px;
+}
+
+button{
+    margin:5px;
+    padding:10px 20px;
+}
+
+pre{
+    background:#eee;
+    padding:15px;
+    white-space:pre-wrap;
+}
+</style>
+
+</head>
+<body>
+
+<h2>Prueba CORS Terpel</h2>
+
+<button onclick="conCors()">Probar CON CORS</button>
+
+<button onclick="sinCors()">Probar SIN CORS</button>
+
+<h3>Resultado</h3>
+
+<pre id="resultado"></pre>
+
+<script>
+
+const endpoint =
+"http://terpelservices.globalgw.com:8080/terpel-services-v2/places/map?categories=estacion_terpel.rumbo.urbana&categories=estacion_terpel.rumbo.rural&categories=estacion_terpel.rumbo.troncal";
+
+const proxy =
+"https://test-cors.globalgw.com:9443/";
+
+const headers = {
+
+    "apiKey":"a93c14d535e718c2b1ab0a5ed8573fba",
+
+    "mgToken":"Vo5LDyGJ1dlyC2lGmv8cl3711Kj9A8PMEk3jcPG+J5w=",
+
+    "Mg-Protocol":"200"
+
+};
+
+async function ejecutar(url){
+
+    document.getElementById("resultado").textContent="Consultando...";
+
+    try{
+
+        const r = await fetch(url,{
+            headers:headers
+        });
+
+        const json = await r.json();
+
+        document.getElementById("resultado").textContent =
+        JSON.stringify(json,null,2);
+
+    }
+    catch(e){
+
+        console.error(e);
+
+        document.getElementById("resultado").textContent =
+        e.toString();
+
+    }
+
+}
+
+function conCors(){
+
+    ejecutar(proxy + endpoint);
+
+}
+
+function sinCors(){
+
+    ejecutar(endpoint);
+
+}
+
+</script>
+
+</body>
+</html>
