@@ -6,68 +6,24 @@
 
 <style>
 body{
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 40px;
-    background-color: #fafafa;
-    color: #333;
-}
-
-h2 {
-    color: #222;
+    font-family:Arial,Helvetica,sans-serif;
+    margin:40px;
 }
 
 button{
-    padding: 12px 24px;
-    margin-right: 10px;
-    margin-bottom: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #fff;
-    transition: all 0.2s ease;
-}
-
-button:hover {
-    background-color: #f0f0f0;
-}
-
-/* Estilo específico para destacar los botones */
-button[onclick="conCors()"] {
-    border-color: #28a745;
-    color: #28a745;
-}
-button[onclick="conCors()"]:hover {
-    background-color: #e8f5e9;
-}
-
-button[onclick="sinCors()"] {
-    border-color: #dc3545;
-    color: #dc3545;
-}
-button[onclick="sinCors()"]:hover {
-    background-color: #fde8e8;
+    padding:10px 20px;
+    margin-right:10px;
+    margin-bottom:20px;
+    cursor:pointer;
 }
 
 pre{
-    background: #f4f4f4;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 15px;
-    white-space: pre-wrap;
-    max-height: 600px;
-    overflow: auto;
-    font-family: monospace;
-}
-
-/* Clases para colorear las respuestas en pantalla */
-.error-mensaje {
-    color: #c53030;
-    font-weight: bold;
-}
-
-.exito-mensaje {
-    color: #2f855a;
+    background:#f4f4f4;
+    border:1px solid #ccc;
+    padding:15px;
+    white-space:pre-wrap;
+    max-height:600px;
+    overflow:auto;
 }
 </style>
 
@@ -78,14 +34,13 @@ pre{
 <h2>Prueba Proxy CORS - Terpel</h2>
 
 <button onclick="conCors()">
-Probar CON CORS (Usando Proxy)
+Probar CON CORS
 </button>
 
 <button onclick="sinCors()">
-Probar SIN CORS (Directo)
+Probar SIN CORS
 </button>
 
-<h3>Resultado en pantalla:</h3>
 <pre id="resultado">Esperando prueba...</pre>
 
 <script>
@@ -97,55 +52,58 @@ const proxy =
 "https://test-cors.globalgw.com:9443/";
 
 const headers = {
-    "apiKey":"a93c14d535e718c2b1ab0a5ed8573fba",
-    "mgToken":"Vo5LDyGJ1dlyC2lGmv8cl3711Kj9A8PMEk3jcPG+J5w=",
-    "Mg-Protocol":"200"
-};
 
-const resultado = document.getElementById("resultado");
+"apiKey":"a93c14d535e718c2b1ab0a5ed8573fba",
+
+"mgToken":"Vo5LDyGJ1dlyC2lGmv8cl3711Kj9A8PMEk3jcPG+J5w=",
+
+"Mg-Protocol":"200"
+
+};
 
 async function ejecutar(url){
 
-    resultado.className = ""; // Limpiar clases previas
-    resultado.textContent = "Consultando...";
+    resultado.textContent="Consultando...";
 
     try{
-        const respuesta = await fetch(url,{
-            headers: headers
+
+        const respuesta=await fetch(url,{
+            headers:headers
         });
 
-        const data = await respuesta.json();
+        const data=await respuesta.json();
 
-        console.log("Respuesta completa:", data);
-        console.log("Cantidad estaciones:", data.features.length);
-        console.log("Primera estación:", data.features[0]);
+        console.log("Respuesta completa:",data);
 
-        // Si funciona, mostramos la primera estación en formato JSON bonito
-        resultado.className = "exito-mensaje";
-        resultado.textContent = "¡Conexión Exitosa!\n\nPrimera estación encontrada:\n" + JSON.stringify(data.features[0], null, 2);
+        console.log("Cantidad estaciones:",data.features.length);
+
+        console.log("Primera estación:",data.features[0]);
+
+        resultado.textContent=
+JSON.stringify(data.features[0],null,2);
 
     }
-    catch(e){
-        console.error("Error capturado en JS:", e);
 
-        // Personalizamos el mensaje en pantalla para advertir sobre el CORS
-        resultado.className = "error-mensaje";
-        resultado.innerHTML = 
-            `❌ Error en la petición: ${e.toString()}\n\n` +
-            `⚠️ NOTA SOBRE CORS:\n` +
-            `Si estás probando "SIN CORS" desde GitHub Pages (https), el navegador habrá bloqueado la respuesta.\n` +
-            `Por favor, abre las Herramientas de Desarrollador de tu navegador (Presiona F12 o clic derecho -> Inspeccionar -> pestaña Consola)\n` +
-            `para ver el reporte oficial de bloqueo por política CORS.`;
+    catch(e){
+
+        console.error(e);
+
+        resultado.textContent=e;
+
     }
 
 }
 
 function conCors(){
-    ejecutar(proxy + endpoint);
+
+    ejecutar(proxy+endpoint);
+
 }
 
 function sinCors(){
+
     ejecutar(endpoint);
+
 }
 
 </script>
