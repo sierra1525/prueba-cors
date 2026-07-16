@@ -3,92 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <title>Prueba CORS</title>
-
-<style>
-body{
-    font-family:Arial;
-    margin:40px;
-}
-
-button{
-    padding:12px 20px;
-    margin-right:15px;
-    cursor:pointer;
-}
-
-pre{
-    margin-top:20px;
-    background:#eee;
-    padding:15px;
-    white-space:pre-wrap;
-}
-</style>
-
 </head>
 
 <body>
 
-<h2>Prueba de CORS</h2>
+<h2>Prueba SIN CORS</h2>
 
-<button onclick="sinCors()">
-Probar SIN CORS
+<button onclick="probar()">
+Probar API
 </button>
 
-<button onclick="conCors()">
-Probar CON CORS
-</button>
-
-<pre id="resultado"></pre>
+<pre id="salida"></pre>
 
 <script>
 
-const endpoint =
-"https://public-api.wordpress.com/rest/v1/me/";
+async function probar(){
 
-const proxy =
-"https://test-cors.globalgw.com:9443/";
-
-const salida = document.getElementById("resultado");
-
-async function ejecutar(url){
-
-    salida.textContent="Consultando...\n\n"+url;
+    const salida = document.getElementById("salida");
 
     try{
 
-        const respuesta = await fetch(url);
+        const r = await fetch(
+            "https://test-cors.globalgw.com:5443/api"
+        );
 
-        salida.textContent +=
-            "\n\nSTATUS: "+respuesta.status+
-            "\nOK: "+respuesta.ok;
+        const txt = await r.text();
 
-        const texto = await respuesta.text();
+        salida.textContent = txt;
 
-        salida.textContent +=
-            "\n\nRESPUESTA:\n\n"+texto;
+    }catch(e){
 
-    }
-    catch(e){
+        salida.textContent = e;
 
         console.error(e);
 
-        salida.textContent +=
-            "\n\nERROR:\n\n"+
-            e;
-
     }
-
-}
-
-function sinCors(){
-
-    ejecutar(endpoint);
-
-}
-
-function conCors(){
-
-    ejecutar(proxy + endpoint);
 
 }
 
