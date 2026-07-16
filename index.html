@@ -2,79 +2,93 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Prueba CORS</title>
+<title>Prueba CORS Terpel</title>
 
 <style>
 body{
-    font-family:Arial;
+    font-family:Arial,Helvetica,sans-serif;
     margin:40px;
 }
 
 button{
-    margin:5px;
     padding:10px 20px;
+    margin-right:10px;
+    margin-bottom:20px;
+    cursor:pointer;
 }
 
 pre{
-    background:#eee;
+    background:#f4f4f4;
+    border:1px solid #ccc;
     padding:15px;
     white-space:pre-wrap;
+    max-height:600px;
+    overflow:auto;
 }
 </style>
 
 </head>
+
 <body>
 
-<h2>Prueba CORS Terpel</h2>
+<h2>Prueba Proxy CORS - Terpel</h2>
 
-<button onclick="conCors()">Probar CON CORS</button>
+<button onclick="conCors()">
+Probar CON CORS
+</button>
 
-<button onclick="sinCors()">Probar SIN CORS</button>
+<button onclick="sinCors()">
+Probar SIN CORS
+</button>
 
-<h3>Resultado</h3>
-
-<pre id="resultado"></pre>
+<pre id="resultado">Esperando prueba...</pre>
 
 <script>
 
 const endpoint =
-"http://terpelservices.globalgw.com:8080/terpel-services-v2/places/map?categories=estacion_terpel.rumbo.urbana&categories=estacion_terpel.rumbo.rural&categories=estacion_terpel.rumbo.troncal";
+"https://terpelservices.globalgw.com:8443/terpel-services-v2/places/map?categories=estacion_terpel.rumbo.urbana&categories=estacion_terpel.rumbo.rural&categories=estacion_terpel.rumbo.troncal";
 
 const proxy =
 "https://test-cors.globalgw.com:9443/";
 
 const headers = {
 
-    "apiKey":"a93c14d535e718c2b1ab0a5ed8573fba",
+"apiKey":"a93c14d535e718c2b1ab0a5ed8573fba",
 
-    "mgToken":"Vo5LDyGJ1dlyC2lGmv8cl3711Kj9A8PMEk3jcPG+J5w=",
+"mgToken":"Vo5LDyGJ1dlyC2lGmv8cl3711Kj9A8PMEk3jcPG+J5w=",
 
-    "Mg-Protocol":"200"
+"Mg-Protocol":"200"
 
 };
 
 async function ejecutar(url){
 
-    document.getElementById("resultado").textContent="Consultando...";
+    resultado.textContent="Consultando...";
 
     try{
 
-        const r = await fetch(url,{
+        const respuesta=await fetch(url,{
             headers:headers
         });
 
-        const json = await r.json();
+        const data=await respuesta.json();
 
-        document.getElementById("resultado").textContent =
-        JSON.stringify(json,null,2);
+        console.log("Respuesta completa:",data);
+
+        console.log("Cantidad estaciones:",data.features.length);
+
+        console.log("Primera estación:",data.features[0]);
+
+        resultado.textContent=
+JSON.stringify(data.features[0],null,2);
 
     }
+
     catch(e){
 
         console.error(e);
 
-        document.getElementById("resultado").textContent =
-        e.toString();
+        resultado.textContent=e;
 
     }
 
@@ -82,7 +96,7 @@ async function ejecutar(url){
 
 function conCors(){
 
-    ejecutar(proxy + endpoint);
+    ejecutar(proxy+endpoint);
 
 }
 
