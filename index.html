@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Prueba CORS Terpel</title>
+<title>Prueba Proxy CORS</title>
 
 <style>
 body{
@@ -12,13 +12,12 @@ body{
 
 button{
     padding:10px 20px;
-    margin-right:10px;
-    margin-bottom:20px;
+    margin:10px;
     cursor:pointer;
 }
 
 pre{
-    background:#f4f4f4;
+    background:#f5f5f5;
     border:1px solid #ccc;
     padding:15px;
     white-space:pre-wrap;
@@ -28,20 +27,17 @@ pre{
 </style>
 
 </head>
-
 <body>
 
-<h2>Prueba Proxy CORS - Terpel</h2>
+<h2>Prueba Proxy CORS</h2>
 
-<button onclick="conCors()">
-Probar CON CORS
-</button>
+<button onclick="conCors()">Probar CON CORS</button>
 
-<button onclick="sinCors()">
-Probar SIN CORS
-</button>
+<button onclick="sinCors()">Probar SIN CORS</button>
 
-<pre id="resultado">Esperando prueba...</pre>
+<h3>Resultado</h3>
+
+<pre id="resultado">Esperando...</pre>
 
 <script>
 
@@ -52,35 +48,51 @@ const proxy =
 "https://test-cors.globalgw.com:9443/";
 
 const headers = {
-
-"apiKey":"a93c14d535e718c2b1ab0a5ed8573fba",
-
-"mgToken":"Vo5LDyGJ1dlyC2lGmv8cl3711Kj9A8PMEk3jcPG+J5w=",
-
-"Mg-Protocol":"200"
-
+    "apiKey":"a93c14d535e718c2b1ab0a5ed8573fba",
+    "mgToken":"Vo5LDyGJ1dlyC2lGmv8cl3711Kj9A8PMEk3jcPG+J5w=",
+    "Mg-Protocol":"200"
 };
 
 async function ejecutar(url){
 
     resultado.textContent="Consultando...";
 
+    console.clear();
+
+    console.log("====================================");
+    console.log("URL:");
+    console.log(url);
+    console.log("====================================");
+
     try{
 
-        const respuesta=await fetch(url,{
+        const respuesta = await fetch(url,{
             headers:headers
         });
 
-        const data=await respuesta.json();
+        console.log("STATUS:",respuesta.status);
+        console.log("OK:",respuesta.ok);
 
-        console.log("Respuesta completa:",data);
+        const texto = await respuesta.text();
 
-        console.log("Cantidad estaciones:",data.features.length);
+        console.log("RESPUESTA:");
+        console.log(texto);
 
-        console.log("Primera estación:",data.features[0]);
+        try{
 
-        resultado.textContent=
-JSON.stringify(data.features[0],null,2);
+            const json = JSON.parse(texto);
+
+            resultado.textContent =
+JSON.stringify(json,null,2);
+
+        }
+
+        catch(e){
+
+            resultado.textContent =
+texto;
+
+        }
 
     }
 
@@ -96,7 +108,7 @@ JSON.stringify(data.features[0],null,2);
 
 function conCors(){
 
-    ejecutar(proxy+endpoint);
+    ejecutar(proxy + endpoint);
 
 }
 
