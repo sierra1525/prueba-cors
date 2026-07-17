@@ -1,47 +1,147 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 <meta charset="UTF-8">
-<title>Prueba CORS</title>
+<title>Demostración CORS</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    margin:40px;
+    background:#f5f5f5;
+}
+
+button{
+    padding:12px 20px;
+    margin-right:15px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+pre{
+    margin-top:20px;
+    padding:15px;
+    background:white;
+    border:1px solid #ccc;
+    min-height:250px;
+    white-space:pre-wrap;
+    word-break:break-word;
+}
+
+</style>
+
 </head>
 
 <body>
 
-<h2>Prueba SIN CORS</h2>
+<h2>Prueba Proxy CORS</h2>
 
-<button onclick="probar()">
-Probar API
+<p>
+Abra la consola del navegador (F12 → Console) antes de hacer las pruebas.
+</p>
+
+<button onclick="sinCors()">
+Probar SIN CORS
 </button>
 
-<pre id="salida"></pre>
+<button onclick="conCors()">
+Probar CON CORS
+</button>
+
+<pre id="resultado">
+Esperando prueba...
+</pre>
 
 <script>
 
-async function probar(){
+const API =
+"https://test-cors.globalgw.com:5443/api";
 
-    const salida = document.getElementById("salida");
+const PROXY =
+"https://test-cors.globalgw.com:9443/" + API;
+
+async function ejecutar(url,titulo){
+
+    const salida=document.getElementById("resultado");
+
+    salida.textContent="Consultando...";
+
+    console.clear();
+
+    console.log("=================================");
+    console.log(titulo);
+    console.log("URL:",url);
+    console.log("=================================");
 
     try{
 
-        const r = await fetch(
-            "https://test-cors.globalgw.com:5443/api"
-        );
+        const respuesta=await fetch(url);
 
-        const txt = await r.text();
+        console.log("STATUS:",respuesta.status);
+        console.log("OK:",respuesta.ok);
 
-        salida.textContent = txt;
+        const texto=await respuesta.text();
 
-    }catch(e){
+        console.log("RESPUESTA:");
+        console.log(texto);
 
-        salida.textContent = e;
+        salida.textContent=
+`${titulo}
 
-        console.error(e);
+STATUS: ${respuesta.status}
+
+OK: ${respuesta.ok}
+
+RESPUESTA:
+
+${texto}`;
 
     }
+    catch(error){
+
+        console.error(error);
+
+        salida.textContent=
+`${titulo}
+
+ERROR
+
+${error}
+
+La petición fue bloqueada.
+
+Si es un problema de CORS, en la consola (F12)
+verá un mensaje similar a:
+
+Access to fetch at ...
+
+has been blocked by CORS policy
+
+No 'Access-Control-Allow-Origin'
+header is present...
+
+(JavaScript únicamente recibe "Failed to fetch").`;
+
+    }
+
+}
+
+function sinCors(){
+
+    ejecutar(API,"PRUEBA SIN CORS");
+
+}
+
+function conCors(){
+
+    ejecutar(PROXY,"PRUEBA CON CORS");
 
 }
 
 </script>
 
 </body>
+
 </html>
